@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+@keyframes oceanWaves {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Body and font */
+body {
+  background: linear-gradient(270deg, #003cff,#0a1e26,#009ee1,#1f1f1f);
+  background-size: 800% 800%;
+  animation: oceanWaves 90s ease infinite;
+  color: #1f1f1f;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Title centered above the form, wider so it doesn't wrap */
+h1 {
+  font-size: 48px;
+  margin-bottom: 40px;
+  color: #30e8b0;
+  text-align: center;
+  width: 100%;
+  max-width: 900px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 6px rgba(48, 232, 176, 0.7);
+}
+
+/* Form container box with subtle shadow and rounded corners */
+.data-container {
+  background-color: #ffffff;
+  padding: 30px 35px;
+  border-radius: 16px;
+  box-shadow:
+    0 12px 24px rgba(0, 158, 225, 0.12),
+    0 8px 16px rgba(48, 232, 176, 0.18);
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #1f1f1f;
+  transition: box-shadow 0.3s ease;
+}
+
+.data-container:hover {
+  box-shadow:
+    0 20px 40px rgba(0, 158, 225, 0.2),
+    0 14px 28px rgba(48, 232, 176, 0.3);
+}
+
+/* Each label-input pair is a card with soft shadow */
+label {
+  display: block;
+  margin-bottom: 22px;
+  background: #f8fcfc;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow:
+    inset 0 0 8px rgba(48, 232, 176, 0.05),
+    0 1px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.25s ease;
+  cursor: text;
+}
+
+label:hover {
+  box-shadow:
+    inset 0 0 14px rgba(48, 232, 176, 0.12),
+    0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Column header / field name */
+label strong {
+  font-size: 24px;
+  color: #009ee1;
+  display: block;
+  margin-bottom: 3px;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  text-transform: capitalize;
+  user-select: none;
+}
+
+/* Textarea input style */
+textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1.5px solid #d1e7e3;
+  font-size: 1.125rem;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 80px;
+  background-color: #fefefe;
+  color: #1f1f1f;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  box-shadow: inset 0 0 8px rgba(48, 232, 176, 0.05);
+}
+
+textarea:focus, input:focus {
+  outline: none;
+  background-color: white; /* or whatever background you want */
+  box-shadow: none; /* remove any shadow on focus */
+}
+
+/* Readonly textarea styling */
+textarea[readonly] {
+  background-color: #f0f7f6;
+  color: #6b7d7d;
+  cursor: not-allowed;
+  border: 1.5px solid #b0d7d1;
+  box-shadow: none;
+  font-style: italic;
+}
+
+button[type="submit"] {
+  display: block;
+  margin: 20px auto 0;
+  padding: 16px 32px;  /* doubled padding */
+  color: #ffffff;
+  background: #009ee1;
+  border: none;
+  border-radius: 5px;
+  font-size: 24px;      /* doubled font size */
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background: #38d4a4;
+  box-shadow:
+    0 10px 30px rgba(48, 232, 176, 0.5),
+    0 6px 20px rgba(0, 158, 225, 0.5);
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Responsive tweaks */
+@media (max-width: 680px) {
+  .data-container {
+    padding: 20px 20px;
+  }
+
+  h1 {
+    font-size: 30px;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  label strong {
+    font-size: 1.7rem;
+  }
+
+  textarea {
+    min-height: 70px;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 14px 0;
+  }
+}

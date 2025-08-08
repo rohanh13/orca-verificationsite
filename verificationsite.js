@@ -4,30 +4,12 @@ let currentRowIndex = null; // to know which row we're editing
 
 const readOnlyFields = new Set([
   'diagnosis',
-  'initials'
+  'author'
 ]);
 
 const replacements = {
-  desc: "Description of pain",
-  bodypart: "Body part",
-  spec: "Specifically",
-  SwelDisc: "Swelling, Discolouration, or Bruising",
-  male: "Mostly affects males",
-  female: "Mostly affects females",
-  excfemale: "Exclusively affects females",
-  excmale: "Exclusively affects males",
-  initials: "Author",
-  foreheadtemple: "Forehead and/or Temple",
-  backskull: "Back of skull",
-  TopSkull: "Top of Skull",
-  JawChin: "Jaw and/or Chin",
-  AnteriorNeck: "Anterior Neck",
-  PosteriorNeck: "Posterior Neck (C1 to C7)",
-  AchillesAnkle: "Posterior Ankle (incl. Achilles Tendon)",
-  UpperBack: "Upper Back (T1 to T9)",
-  MidBack: "Mid Back (T10 to L2)",
-  LowerBack: "Lower Back (L3 to Coccyx)"
-
+  desc: "Description of Pain",
+  sweldisc: "Swelling, Discolouration, or Bruising"
   // add more mappings here
 };
 
@@ -61,15 +43,15 @@ function handleData(data) {
     const isReadOnly = readOnlyFields.has(key.toLowerCase());
 
     html += `
-      <label style="display:block; margin-top: 8px;">
+    <label style="display:block; margin-top: 8px;">
         <strong>${key}:</strong><br>
         <textarea 
-          name="${key}" 
-          style="width: 100%; padding: 6px; box-sizing: border-box;" 
-          rows="3"
-          ${isReadOnly ? 'readonly' : ''}
+        name="${key}" 
+        style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
+        rows="3"
+        ${isReadOnly ? 'readonly' : ''}
         >${value || ''}</textarea>
-      </label>
+    </label>
     `;
   }
 
