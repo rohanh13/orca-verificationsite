@@ -13,6 +13,16 @@ const replacements = {
   // add more mappings here
 };
 
+const fixedOptions = {
+  "For what age group(s) does this apply?": [
+    "BabyToddlerChild",
+    "Adolescent",
+    "25–45",
+    "MiddleAged",
+    "Senior",
+    "All"
+  ]};
+
 function replaceKeys(obj) {
   const newObj = {};
   for (const [key, val] of Object.entries(obj)) {
@@ -43,19 +53,28 @@ function handleData(data) {
     const isReadOnly = readOnlyFields.has(key.toLowerCase());
 
     html += `
-    <label style="display:block; margin-top: 8px;">
+      <label style="display:block; margin-top: 8px;">
         <strong>${key}:</strong><br>
         <textarea 
-        name="${key}" 
-        style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
-        rows="3"
-        ${isReadOnly ? 'readonly' : ''}
+          name="${key}" 
+          style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
+          rows="3"
+          ${isReadOnly ? 'readonly' : ''}
         >${value || ''}</textarea>
-    </label>
+      </label>
     `;
   }
 
-  form.innerHTML = html + `<button type="submit" style="margin-top: 15px; padding: 8px 16px;">Save Changes</button>`;
+  // Add physician name input AFTER the loop, just once
+  html += `
+    <label style="display:block; margin-top: 16px;">
+      <strong>Physician Name:</strong><br>
+      <textarea name="physicianName" rows="1" style="width: 100%; padding: 6px; box-sizing: border-box;" required></textarea>
+    </label>
+    <button type="submit" style="margin-top: 15px; padding: 8px 16px;">Save Changes</button>
+  `;
+
+  form.innerHTML = html;
 }
 
 function loadRandomRow() {
@@ -81,14 +100,26 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
   const formData = new FormData(this);
   const dataObj = { rowIndex: currentRowIndex };
 
-  // Reverse replacements: convert friendly keys back to original keys for sending
+  // Reverse replacements map for keys
   const reverseReplacements = {};
   for (const [k, v] of Object.entries(replacements)) {
     reverseReplacements[v.toLowerCase()] = k;
   }
 
+  // Get physician name first
+  const physicianName = formData.get("physicianName") || "";
+
+  // Put physician name in column 1 key — assuming that key is "diagnosis" in your sheet
+  // (Adjust if your sheet uses another column header for col 1)
+  dataObj["physician"] = physicianName;
+
+  // Now add other form entries except physicianName itself
   for (const [key, val] of formData.entries()) {
+    if (key === "physicianName") continue; // skip because we already handled it
+
+    // Convert friendly key back to original key
     const originalKey = reverseReplacements[key.toLowerCase()] || key;
+
     dataObj[originalKey] = val;
   }
 
