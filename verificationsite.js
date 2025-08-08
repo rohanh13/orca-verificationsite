@@ -101,3 +101,32 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
 });
 
 document.addEventListener("DOMContentLoaded", loadRandomRow);
+
+
+function saveDataJSONP(dataObj) {
+  const callbackName = 'saveCallback_' + Math.random().toString(36).substring(2, 15);
+
+  window[callbackName] = function(response) {
+    if (response.success) {
+      alert("Data saved successfully!");
+      loadRandomRow();
+    } else {
+      alert("Error saving data: " + (response.error || "Unknown error"));
+    }
+    // cleanup
+    delete window[callbackName];
+    document.getElementById(callbackName)?.remove();
+  };
+
+  const params = new URLSearchParams();
+  params.set('action', 'save');
+  params.set('callback', callbackName);
+  for (const [k, v] of Object.entries(dataObj)) {
+    params.set(k, v);
+  }
+
+  const script = document.createElement('script');
+  script.src = APPSCRIPT_URL + '?' + params.toString();
+  script.id = callbackName;
+  document.body.appendChild(script);
+}
