@@ -69,7 +69,6 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
   const dataObj = { rowIndex: currentRowIndex };
 
   // Reverse replacements: convert friendly keys back to original keys for sending
-  // We'll build a reverse mapping here:
   const reverseReplacements = {};
   for (const [k, v] of Object.entries(replacements)) {
     reverseReplacements[v.toLowerCase()] = k;
@@ -80,24 +79,7 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
     dataObj[originalKey] = val;
   }
 
-  // Send POST request to Apps Script
-  fetch(APPSCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dataObj)
-  })
-  .then(res => res.json())
-  .then(resp => {
-    if (resp.success) {
-      alert("Data saved successfully!");
-      loadRandomRow(); // reload new random data
-    } else {
-      alert("Error saving data: " + (resp.error || "Unknown error"));
-    }
-  })
-  .catch(err => {
-    alert("Network or server error: " + err.message);
-  });
+  saveDataJSONP(dataObj);
 });
 
 document.addEventListener("DOMContentLoaded", loadRandomRow);
