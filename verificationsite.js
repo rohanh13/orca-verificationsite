@@ -37,7 +37,7 @@ function handleData(data) {
     html += `
       <label style="display:block; margin-top: 8px;">
         <strong>${key}:</strong><br>
-        <input type="text" name="${key}" value="${value || ''}" style="width: 100%; padding: 6px; box-sizing: border-box;">
+        <textarea name="${key}" style="width: 100%; padding: 6px; box-sizing: border-box;" rows="3">${value || ''}</textarea>
       </label>
     `;
   }
