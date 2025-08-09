@@ -13,15 +13,20 @@ const replacements = {
   // add more mappings here
 };
 
-const fixedOptions = {
-  "For what age group(s) does this apply?": [
-    "BabyToddlerChild",
-    "Adolescent",
-    "25–45",
-    "MiddleAged",
-    "Senior",
-    "All"
-  ]};
+const fieldHints = {
+  age: "Options: Babies/Toddlers/Children , Adolescents/Young Adults , 25-45 year olds , Middle Aged , Seniors , All of the Above",
+  sex: "Options: Exclusively Females , Mostly Females , Exclusively Males , Mostly Males , Both",
+  "Swelling, Discolouration, or Bruising": "Options: Swelling , Discolouration , Bruising , None of the Above , All of the Above",
+  "Description of Pain": "Options: Radiating , Tingling , Throbbing , Burning , Stinging , Crushing , Aching/Dull , Sharp/Shooting , Stiff/Tight , None of the Above , All of the Above",
+  severity: "Options: Severe (>7/10) , Moderate (4-6/10) , Mild (1-3/10) , None",
+  onset: "Options: From Injury , Hereditary , Congenital , Spontaneously , Longitudinal (over a period of time) , None of the Above",
+  frequency: "Options: Constant , Intermittent , Conditional , None of the Above, All of the Above",
+};
+
+// normalized lookup (all lowercase + trim) — use this when rendering hints
+const hintLookup = Object.fromEntries(
+  Object.entries(fieldHints).map(([k, v]) => [k.toLowerCase().trim(), v])
+);
 
 function replaceKeys(obj) {
   const newObj = {};
@@ -53,16 +58,21 @@ function handleData(data) {
     const isReadOnly = readOnlyFields.has(key.toLowerCase());
 
     html += `
-      <label style="display:block; margin-top: 8px;">
-        <strong>${key}:</strong><br>
-        <textarea 
-          name="${key}" 
-          style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
-          rows="3"
-          ${isReadOnly ? 'readonly' : ''}
-        >${value || ''}</textarea>
-      </label>
-    `;
+        <label style="display:block; margin-top: 8px;">
+            <strong>${key}:</strong><br>
+            <textarea 
+            name="${key}" 
+            style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
+            rows="3"
+            ${isReadOnly ? 'readonly' : ''}
+            >${value || ''}</textarea>
+            ${hintLookup[key.toLowerCase().trim()] 
+        ? `<div style="font-size: 0.85em; font-style: italic; color: #666; margin-top:6px;">
+            ${hintLookup[key.toLowerCase().trim()]}
+            </div>`
+        : ''}
+        </label>
+        `;
   }
 
   // Add physician name input AFTER the loop, just once
