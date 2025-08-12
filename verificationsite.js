@@ -22,20 +22,10 @@ const fieldHints = {
   onset: "Options: From Injury , Hereditary , Congenital , Spontaneously , Longitudinal (over a period of time) , None of the Above",
   frequency: "Options: Constant , Intermittent , Conditional , None of the Above, All of the Above",
 };
-
 // normalized lookup (all lowercase + trim) — use this when rendering hints
 const hintLookup = Object.fromEntries(
   Object.entries(fieldHints).map(([k, v]) => [k.toLowerCase().trim(), v])
 );
-
-function replaceKeys(obj) {
-  const newObj = {};
-  for (const [key, val] of Object.entries(obj)) {
-    const newKey = replacements[key.toLowerCase()] || key;
-    newObj[newKey] = val;
-  }
-  return newObj;
-}
 
 function handleData(data) {
   const form = document.getElementById("dataForm");
@@ -45,16 +35,12 @@ function handleData(data) {
     return;
   }
 
-  currentRowIndex = data._rowIndex || null; // row number to send back on submit
+  currentRowIndex = data._rowIndex || null;
 
-  // Apply replacements to keys for friendlier labels
-  const displayData = replaceKeys(data);
-
-  // Build inputs from data keys and values
   let html = "";
-  for (const [key, value] of Object.entries(displayData)) {
-    if (key === "_rowIndex") continue; // skip special key if any
-    
+  for (const [key, value] of Object.entries(data)) {
+    if (key === "_rowIndex") continue;
+
     const isReadOnly = readOnlyFields.has(key.toLowerCase());
 
     html += `
@@ -64,22 +50,21 @@ function handleData(data) {
             name="${key}" 
             style="width: 100%; padding: 6px; box-sizing: border-box; ${isReadOnly ? 'background:#eee; color:#555;' : ''}" 
             rows="3"
-            ${isReadOnly ? 'readonly' : ''}
-            >${value || ''}</textarea>
+            ${isReadOnly ? 'readonly' : ''}>${value || ''}</textarea>
             ${hintLookup[key.toLowerCase().trim()] 
         ? `<div style="font-size: 0.85em; font-style: italic; color: #666; margin-top:6px;">
             ${hintLookup[key.toLowerCase().trim()]}
             </div>`
         : ''}
         </label>
-        `;
+    `;
   }
 
-  // Add physician name input AFTER the loop, just once
+  // Physician name input
   html += `
     <label style="display:block; margin-top: 16px;">
       <strong>Physician Name:</strong><br>
-      <textarea name="physicianName" rows="1" style="width: 100%; padding: 6px; box-sizing: border-box;" required></textarea>
+      <textarea name="physician" rows="1" style="width: 100%; padding: 6px; box-sizing: border-box;" required></textarea>
     </label>
     <button type="submit" style="margin-top: 15px; padding: 8px 16px;">Save Changes</button>
   `;
@@ -88,7 +73,6 @@ function handleData(data) {
 }
 
 function loadRandomRow() {
-  // Clear old script tag if any (to avoid duplicates)
   const oldScript = document.getElementById('jsonpScript');
   if (oldScript) oldScript.remove();
 
@@ -110,27 +94,8 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
   const formData = new FormData(this);
   const dataObj = { rowIndex: currentRowIndex };
 
-  // Reverse replacements map for keys
-  const reverseReplacements = {};
-  for (const [k, v] of Object.entries(replacements)) {
-    reverseReplacements[v.toLowerCase()] = k;
-  }
-
-  // Get physician name first
-  const physicianName = formData.get("physicianName") || "";
-
-  // Put physician name in column 1 key — assuming that key is "diagnosis" in your sheet
-  // (Adjust if your sheet uses another column header for col 1)
-  dataObj["physician"] = physicianName;
-
-  // Now add other form entries except physicianName itself
   for (const [key, val] of formData.entries()) {
-    if (key === "physicianName") continue; // skip because we already handled it
-
-    // Convert friendly key back to original key
-    const originalKey = reverseReplacements[key.toLowerCase()] || key;
-
-    dataObj[originalKey] = val;
+    dataObj[key] = val;
   }
 
   saveDataJSONP(dataObj);
@@ -138,18 +103,24 @@ document.getElementById("dataForm").addEventListener("submit", function(e) {
 
 document.addEventListener("DOMContentLoaded", loadRandomRow);
 
-
 function saveDataJSONP(dataObj) {
   const callbackName = 'saveCallback_' + Math.random().toString(36).substring(2, 15);
 
   window[callbackName] = function(response) {
     if (response.success) {
-      alert("Data saved successfully!");
-      loadRandomRow();
+      // Reload data after 1000ms
+      setTimeout(() => {
+        loadRandomRow();
+      }, 1000);
+
+      // Scroll up after 2000ms
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 2000);
+
     } else {
       alert("Error saving data: " + (response.error || "Unknown error"));
     }
-    // cleanup
     delete window[callbackName];
     document.getElementById(callbackName)?.remove();
   };
